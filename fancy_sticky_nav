@@ -1,0 +1,64 @@
+/*****sticky nav that starts at a fixed point, disappears once past, reappears when scrolling up, and then stays at beginning point once hit*******/
+
+/*css*/
+
+#navbar {
+    height: 50px;
+    background-color: rgba(52, 17, 116, .8);
+    -webkit-transform: translate3d(0,0,0);
+    -moz-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+    -webkit-transition: -webkit-transform .3s;
+    -moz-transition: -moz-transform .3s;
+    -o-transition: transform .3s;
+    transition: transform .3s;
+}
+#navbar.scrolled {
+    /* subtract your height */
+    -webkit-transform: translate3d(0,-80px,0);
+    -moz-transform: translate3d(0,-80px,0);
+    transform: translate3d(0,-80px,0);
+}
+
+#navbar.sticky{
+  position: fixed;
+  z-index:10;
+  right: 0; left: 0; top: 0;
+}
+
+/*JS*/
+
+  //navbar sticky
+  (function (){
+    //	var previousScroll = 0;
+      var offset = $('#navbar').offset();
+      var previousScroll = offset.top;
+
+      var navbar = document.getElementById('navbar'),
+          navClasses = navbar.classList; // classList doesn't work <IE10
+
+      window.addEventListener('scroll', function(e){
+        var currentScroll = window.scrollY;
+        var isDown = currentScroll > previousScroll; //scrollY greater than navbar distance from top
+        var anchor = $('#band-2').offset(); //the div right below the navbar
+        var startingpoint = anchor.top; //distance div right below navbar is from top
+        var begin = currentScroll > startingpoint;
+
+        if ( isDown && begin && !navClasses.contains('scrolled') ){
+            // scrolling down past starting point, didn't add class yet
+            navClasses.add('scrolled'); // we hide the navbar
+        } else if ( !isDown && navClasses.contains('scrolled')){
+            // scrolling up
+            navClasses.remove('scrolled'); // won't error if no class found
+            navClasses.add('sticky');
+        } else  if( !begin && navClasses.contains('sticky')){
+          //removes sticky once above marked div
+              navClasses.remove('sticky');
+        }
+
+        // always update position
+        previousScroll = currentScroll;
+
+      });
+  }());
+  //end navbar
